@@ -88,6 +88,8 @@ class Calendar(CaseInsensitiveCheckingLastModifiedBTreeContainer, SchemaConfigur
 
     createDirectFieldProperties(ICalendar)
 
+    creator = None
+
     def __init__(self, *args, **kwargs):
         CaseInsensitiveCheckingLastModifiedBTreeContainer.__init__(self)
         SchemaConfigured.__init__(self, *args, **kwargs)
