@@ -24,7 +24,11 @@ from ZODB.interfaces import IConnection
 
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
+from nti.dataserver.authorization_acl import acl_from_aces
+
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
+
+from nti.property.property import LazyOnClass
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
@@ -46,6 +50,12 @@ class CalendarEvent(SchemaConfigured,
     createDirectFieldProperties(ICalendarEvent)
 
     mimeType = mime_type = "application/vnd.nextthought.calendar.calendarevent"
+
+    @LazyOnClass
+    def __acl__(self):
+        # If we don't have this, it would derive one from ICreated,
+        # rather than its parent (ICalendar).
+        return acl_from_aces([])
 
     def __init__(self, *args, **kwargs):
         SchemaConfigured.__init__(self, *args, **kwargs)
