@@ -17,6 +17,7 @@ from zope.container.interfaces import IContainer
 
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
+from nti.base.interfaces import ITitledDescribed
 
 from nti.contenttypes.presentation.interfaces import href_schema_field
 
@@ -24,7 +25,7 @@ from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
 
-class ICalendarEvent(ICreated, ILastModified, IContained):
+class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
     """
     A calendar event.
     """
@@ -52,7 +53,7 @@ class ICalendarEvent(ICreated, ILastModified, IContained):
                              required=False)
 
 
-class ICalendar(ILastModified, IContainer):
+class ICalendar(ILastModified, ITitledDescribed, IContainer):
     """
     A storage container for :class:`ICalendarEvent` objects.
     """
