@@ -76,7 +76,7 @@ class ICalendar(ILastModified, ITitledDescribed, IContainer):
         Remove the given event.
         """
 
-    def retrieve_event(ntiid):
+    def retrieve_event(event_id):
         """
-        Retrieve the potential calendar event with given ntiid.
+        Retrieve the potential calendar event with given id.
         """

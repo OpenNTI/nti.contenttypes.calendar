@@ -11,12 +11,14 @@ import datetime
 import unittest
 
 from hamcrest import assert_that
+from hamcrest import calling
 from hamcrest import contains
 from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import has_properties
 from hamcrest import is_
 from hamcrest import not_none
+from hamcrest import raises
 from hamcrest import same_instance
 from hamcrest import starts_with
 
@@ -56,7 +58,6 @@ class TestExternalization(ContentTypesCalendarLayerTest):
                                            'start_time': not_none(),
                                            'end_time': not_none(),
                                            'icon': '/abc/efg',
-                                           'NTIID': not_none(),
                                            'Last Modified': not_none(),
                                            'MimeType': 'application/vnd.nextthought.calendar.calendarevent'}))
 
@@ -67,7 +68,6 @@ class TestExternalization(ContentTypesCalendarLayerTest):
                                             'start_time': not_none(),
                                             'end_time': not_none(),
                                             'icon': '/abc/efg',
-                                            'ntiid': not_none(),
                                             'lastModified': not_none()}))
 
     def testCalendar(self):
@@ -94,18 +94,19 @@ class TestContainer(ContentTypesCalendarLayerTest):
         calendar = Calendar(title=u'study', descrption=None)
 
         assert_that(calendar.store_event(event), same_instance(event))
-        assert_that(calendar.retrieve_event(event.ntiid), same_instance(event))
+        assert_that(calendar.retrieve_event(event.id), same_instance(event))
         assert_that(calendar, has_length(1))
         assert_that([x for x in calendar.values()], contains(event))
 
         assert_that(event.__parent__, same_instance(calendar))
 
-        calendar.remove_event(event.ntiid)
+        calendar.remove_event(event.id)
         assert_that(event.__parent__, is_(None))
-        assert_that(calendar.retrieve_event(event.ntiid), is_(None))
+        assert_that(calendar.retrieve_event(event.id), is_(None))
         assert_that(calendar, has_length(0))
 
         assert_that(calendar.store_event(event), same_instance(event))
         assert_that(calendar, has_length(1))
-        calendar.remove_event(event)
+        assert_that(calendar.remove_event(event), is_(True))
         assert_that(calendar, has_length(0))
+        assert_that(calendar.remove_event(event), is_(False))

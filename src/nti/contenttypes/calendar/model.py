@@ -10,21 +10,22 @@ from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class
 
+from zope import component
 from zope import interface
-from zope import lifecycleevent
 
 from zope.cachedescriptors.property import Lazy
 from zope.cachedescriptors.property import readproperty
 
 from zope.container.contained import Contained
 
-from zope.location.location import locate
+from zope.container.interfaces import INameChooser
 
-from ZODB.interfaces import IConnection
-
+from nti.containers.containers import AbstractNTIIDSafeNameChooser
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
+
+from nti.property.property import alias
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
@@ -32,8 +33,6 @@ from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
 
 from nti.contenttypes.calendar.interfaces import ICalendar
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
-
-from nti.contenttypes.calendar.common import generate_calendar_event_ntiid
 
 
 @interface.implementer(ICalendarEvent)
@@ -47,36 +46,15 @@ class CalendarEvent(SchemaConfigured,
 
     mimeType = mime_type = "application/vnd.nextthought.calendar.calendarevent"
 
+    id = alias('__name__')
+
     def __init__(self, *args, **kwargs):
         SchemaConfigured.__init__(self, *args, **kwargs)
         PersistentCreatedModDateTrackingObject.__init__(self)
 
-    @Lazy
-    def ntiid(self):
-        return generate_calendar_event_ntiid()
-
     @readproperty
     def start_time(self):
         return self.created
-
-
-def save_in_container(container, key, value, event=True):
-    if event:
-        container[key] = value
-    else:
-        # avoid dublincore annotations for performance
-        container._setitemf(key, value)
-        locate(value, parent=container, name=key)
-        if      IConnection(container, None) is not None \
-            and IConnection(value, None) is None:
-            IConnection(container).add(value)
-        lifecycleevent.added(value, container, key)
-        try:
-            container.updateLastMod()
-        except AttributeError:
-            pass
-        container._p_changed = True
-    return value
 
 
 @interface.implementer(ICalendar)
@@ -95,12 +73,27 @@ class Calendar(CaseInsensitiveCheckingLastModifiedBTreeContainer, SchemaConfigur
         SchemaConfigured.__init__(self, *args, **kwargs)
 
     def store_event(self, event):
-        return save_in_container(self, event.ntiid, event)
+        if not getattr(event, 'id', None):
+            event.id = INameChooser(self).chooseName(event.title, event)
+        self[event.id] = event
+        return event
 
     def remove_event(self, event):
-        ntiid = getattr(event, 'ntiid', event)
-        del self[ntiid]
+        key = getattr(event, 'id', event)
+        try:
+            del self[key]
+            result = True
+        except KeyError:
+            result = False
+        return result
 
-    def retrieve_event(self, ntiid):
-        assert ntiid, "Must provide a ntiid."
-        return self.get(ntiid, None)
+    def retrieve_event(self, event_id):
+        return self.get(event_id, None)
+
+@component.adapter(ICalendar)
+@interface.implementer(INameChooser)
+class _CalendarNameChooser(AbstractNTIIDSafeNameChooser):
+    """
+    Handles NTIID-safe name choosing for a calendar event.
+    """
+    leaf_iface = ICalendar

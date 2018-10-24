@@ -13,6 +13,12 @@
     <include package="nti.externalization" file="meta.zcml" />
     <include package="nti.externalization" />
 
+    <include package="nti.containers" />
+
+    <adapter factory=".model._CalendarNameChooser"
+             for=".interfaces.ICalendar"
+             provides="zope.container.interfaces.INameChooser"/>
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICalendar
                          .interfaces.ICalendarEvent"
