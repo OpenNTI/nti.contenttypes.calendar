@@ -10,6 +10,8 @@ from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class
 
+from zope import interface
+
 from zope.container.constraints import contains
 
 from zope.container.interfaces import IContained
@@ -79,4 +81,16 @@ class ICalendar(ILastModified, ITitledDescribed, IContainer):
     def retrieve_event(event_id):
         """
         Retrieve the potential calendar event with given id.
+        """
+
+
+class ICalendarEventProvider(interface.Interface):
+    """
+    An intended subscriber provider of possible :class:`ICalendarEvent` objects
+    for a :class:`IUser`.
+    """
+
+    def iter_events():
+        """
+        A generator of :class:`ICalendarEvent` objects.
         """
