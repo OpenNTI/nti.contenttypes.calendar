@@ -15,6 +15,8 @@ from zope import interface
 
 from zope.catalog.interfaces import ICatalog
 
+from zope.component.hooks import getSite
+
 from zope.intid.interfaces import IIntIds
 
 from zope.location import locate
@@ -59,10 +61,7 @@ class SiteAdapter(object):
     def __init__(self, obj, default=None):
         if not ICalendarEvent.providedBy(obj):
             return
-
-        folder = IHostPolicyFolder(obj, None)
-        if folder is not None:
-            self.site = text_(folder.__name__)
+        self.site = getattr(getSite(), '__name__', None)
 
     def __reduce__(self):
         raise TypeError()
