@@ -70,6 +70,20 @@ class TestExternalization(ContentTypesCalendarLayerTest):
                                             'icon': '/abc/efg',
                                             'lastModified': not_none()}))
 
+
+        external = {'title': 'ok', 'start_time': 1539993665, 'end_time': 1543190475,
+                    'MimeType': 'application/vnd.nextthought.calendar.calendarevent'}
+        new_io = self._internalize(external)
+        assert_that(new_io, has_properties({'title': 'ok',
+                                           'start_time': not_none(),
+                                           'end_time': not_none()}))
+        assert_that(new_io.start_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-10-20 00:01:05'))
+        assert_that(new_io.end_time.strftime('%Y-%m-%d %H:%M:%S'), is_('2018-11-26 00:01:15'))
+
+        external = {'title': 'ok', 'MimeType': 'application/vnd.nextthought.calendar.calendarevent'}
+        new_io = self._internalize(external)
+        assert_that(new_io.end_time, is_(None))
+
     def testCalendar(self):
         obj = Calendar(title=u"today", description=u'let us go')
         external = toExternalObject(obj)

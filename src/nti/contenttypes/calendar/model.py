@@ -27,6 +27,7 @@ from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.property.property import alias
 
+from nti.schema.fieldproperty import AdaptingFieldProperty
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
@@ -43,6 +44,10 @@ class CalendarEvent(SchemaConfigured,
     __external_can_create__ = True
 
     createDirectFieldProperties(ICalendarEvent)
+
+    start_time = AdaptingFieldProperty(ICalendarEvent['start_time'])
+
+    end_time = AdaptingFieldProperty(ICalendarEvent['end_time'])
 
     mimeType = mime_type = "application/vnd.nextthought.calendar.calendarevent"
 
