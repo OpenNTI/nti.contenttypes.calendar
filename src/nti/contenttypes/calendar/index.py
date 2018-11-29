@@ -34,6 +34,7 @@ from nti.zope_catalog.index import IntegerValueIndex as RawIntegerValueIndex
 from nti.zope_catalog.datetime import TimestampToNormalized64BitIntNormalizer
 
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
+from nti.contenttypes.calendar.interfaces import ICalendarContextNTIIDAdapter
 
 
 CALENDAR_EVENT_CATALOG_NAME = 'nti.dataserver.++etc++calendar-event-catalog'
@@ -44,7 +45,7 @@ IX_SITE = 'site'
 #: MimeType
 IX_MIMETYPE = 'mimeType'
 
-# Context, may include user, course, community, DFL
+# Context, currently it's the ntiid of course catalog entry.
 IX_CONTEXT_NTIID = 'contextNTIID'
 
 #: Start time
@@ -75,22 +76,6 @@ class MimeTypeAdapter(object):
         if not ICalendarEvent.providedBy(obj):
             return
         self.mimeType = getattr(obj, 'mimeType', None) or getattr(obj, 'mime_type', None)
-
-    def __reduce__(self):
-        raise TypeError()
-
-
-class ContextNTIIDAdapter(object):
-
-    __slots__ = (b'contextNTIID',)
-
-    def __init__(self, obj, default=None):
-        if not ICalendarEvent.providedBy(obj):
-            return
-
-        context = getattr(obj.__parent__, '__parent__', None)
-        if context is not None:
-            self.contextNTIID = getattr(context, 'ntiid', None)
 
     def __reduce__(self):
         raise TypeError()
@@ -136,7 +121,7 @@ class MimeTypeIndex(AttributeValueIndex):
 
 class ContextNTIIDIndex(AttributeValueIndex):
     default_field_name = IX_CONTEXT_NTIID
-    default_interface = ContextNTIIDAdapter
+    default_interface = ICalendarContextNTIIDAdapter
 
 
 def StartTimeIndex(family=BTrees.family64):

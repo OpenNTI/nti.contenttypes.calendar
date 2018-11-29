@@ -94,3 +94,12 @@ class ICalendarEventProvider(interface.Interface):
         """
         A generator of :class:`ICalendarEvent` objects.
         """
+
+
+# catalog
+
+class ICalendarContextNTIIDAdapter(interface.Interface):
+    """
+    Adapts contained objects to their context NTIID.
+    """
+    contextNTIID = interface.Attribute("NTIID string")
