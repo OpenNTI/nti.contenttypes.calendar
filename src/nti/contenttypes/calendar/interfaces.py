@@ -94,3 +94,15 @@ class ICalendarEventProvider(interface.Interface):
         """
         A generator of :class:`ICalendarEvent` objects.
         """
+
+
+class ICalendarProvider(interface.Interface):
+    """
+    An intended subscriber provider of possible :class:`ICalendar` objects
+    for a :class:`IUser`.
+    """
+
+    def iter_calendars():
+        """
+        A generator of :class:`ICalendar` objects.
+        """
