@@ -90,7 +90,7 @@ class ICalendarEventProvider(interface.Interface):
     for a :class:`IUser`.
     """
 
-    def iter_events():
+    def iter_events(**kwargs):
         """
         A generator of :class:`ICalendarEvent` objects.
         """
