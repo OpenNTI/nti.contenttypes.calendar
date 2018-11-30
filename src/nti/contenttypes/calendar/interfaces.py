@@ -96,6 +96,15 @@ class ICalendarEventProvider(interface.Interface):
         """
 
 
+# catalog
+
+class ICalendarContextNTIIDAdapter(interface.Interface):
+    """
+    Adapts contained objects to their context NTIID.
+    """
+    contextNTIID = interface.Attribute("NTIID string")
+
+
 class ICalendarProvider(interface.Interface):
     """
     An intended subscriber provider of possible :class:`ICalendar` objects

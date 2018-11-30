@@ -25,6 +25,8 @@ from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeCo
 
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
+from nti.ntiids.oids import to_external_ntiid_oid
+
 from nti.property.property import alias
 
 from nti.schema.fieldproperty import AdaptingFieldProperty
@@ -60,6 +62,10 @@ class CalendarEvent(SchemaConfigured,
     @readproperty
     def start_time(self):
         return self.created
+
+    @Lazy
+    def ntiid(self):
+        return to_external_ntiid_oid(self)
 
 
 @interface.implementer(ICalendar)
