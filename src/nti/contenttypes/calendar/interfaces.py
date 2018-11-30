@@ -90,12 +90,12 @@ class ICalendarEventProvider(interface.Interface):
     for a :class:`IUser`.
     """
 
-    def iter_events():
+    def iter_events(context_ntiids=None, **kwargs):
         """
         A generator of :class:`ICalendarEvent` objects.
         """
 
-
+        
 # catalog
 
 class ICalendarContextNTIIDAdapter(interface.Interface):
@@ -103,3 +103,15 @@ class ICalendarContextNTIIDAdapter(interface.Interface):
     Adapts contained objects to their context NTIID.
     """
     contextNTIID = interface.Attribute("NTIID string")
+
+
+class ICalendarProvider(interface.Interface):
+    """
+    An intended subscriber provider of possible :class:`ICalendar` objects
+    for a :class:`IUser`.
+    """
+
+    def iter_calendars():
+        """
+        A generator of :class:`ICalendar` objects.
+        """
