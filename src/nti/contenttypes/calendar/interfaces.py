@@ -95,7 +95,7 @@ class ICalendarEventProvider(interface.Interface):
         A generator of :class:`ICalendarEvent` objects.
         """
 
-        
+
 # catalog
 
 class ICalendarContextNTIIDAdapter(interface.Interface):
