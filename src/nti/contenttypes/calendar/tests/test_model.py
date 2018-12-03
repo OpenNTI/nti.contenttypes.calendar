@@ -22,8 +22,14 @@ from hamcrest import raises
 from hamcrest import same_instance
 from hamcrest import starts_with
 
+from zope import interface
+
+from zope.schema.interfaces import ValidationError
+
 from nti.contenttypes.calendar.model import Calendar
 from nti.contenttypes.calendar.model import CalendarEvent
+
+from nti.contenttypes.calendar.interfaces import ICalendarEvent
 
 from nti.contenttypes.calendar.tests import ContentTypesCalendarLayerTest
 
@@ -83,6 +89,18 @@ class TestExternalization(ContentTypesCalendarLayerTest):
         external = {'title': 'ok', 'MimeType': 'application/vnd.nextthought.calendar.calendarevent'}
         new_io = self._internalize(external)
         assert_that(new_io.end_time, is_(None))
+
+        obj =  CalendarEvent(title=u'reading', start_time=datetime.datetime.utcfromtimestamp(10), end_time=None)
+        ICalendarEvent.validateInvariants(obj)
+
+        obj =  CalendarEvent(title=u'reading', start_time=datetime.datetime.utcfromtimestamp(10), end_time=datetime.datetime.utcfromtimestamp(10))
+        ICalendarEvent.validateInvariants(obj)
+
+        obj =  CalendarEvent(title=u'reading', start_time=datetime.datetime.utcfromtimestamp(10), end_time=datetime.datetime.utcfromtimestamp(20))
+        ICalendarEvent.validateInvariants(obj)
+
+        obj =  CalendarEvent(title=u'reading', start_time=datetime.datetime.utcfromtimestamp(20), end_time=datetime.datetime.utcfromtimestamp(10))
+        assert_that(calling(ICalendarEvent.validateInvariants).with_args(obj), raises(ValidationError, 'The end time can not before the start time.'))
 
     def testCalendar(self):
         obj = Calendar(title=u"today", description=u'let us go')

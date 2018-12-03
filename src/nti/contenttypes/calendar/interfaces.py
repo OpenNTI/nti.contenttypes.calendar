@@ -17,6 +17,8 @@ from zope.container.constraints import contains
 from zope.container.interfaces import IContained
 from zope.container.interfaces import IContainer
 
+from zope.schema.interfaces import ValidationError
+
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
 from nti.base.interfaces import ITitledDescribed
@@ -53,6 +55,12 @@ class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
 
     icon = href_schema_field(title=u"Calendar event icon href",
                              required=False)
+
+    @interface.invariant
+    def start_end_time(self):
+        "The end time can not before the start time."
+        if self.end_time and self.start_time and self.end_time < self.start_time:
+            raise ValidationError("The end time can not before the start time.")
 
 
 class ICalendar(ILastModified, ITitledDescribed, IContainer):
