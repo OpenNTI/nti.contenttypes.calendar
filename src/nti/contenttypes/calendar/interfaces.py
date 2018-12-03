@@ -25,6 +25,7 @@ from nti.base.interfaces import ITitledDescribed
 
 from nti.contenttypes.presentation.interfaces import href_schema_field
 
+from nti.schema.field import Text
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
@@ -37,8 +38,8 @@ class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
                           min_length=1,
                           required=True)
 
-    description = ValidTextLine(title=u"Description of the calendar event",
-                                required=False)
+    description = Text(title=u"Description of the calendar event",
+                       required=False)
 
     location = ValidTextLine(title=u"Location of this event",
                              description=u"Where the calendar event should take place",
