@@ -25,6 +25,8 @@ from nti.base.interfaces import ITitledDescribed
 
 from nti.contenttypes.presentation.interfaces import href_schema_field
 
+from nti.coremetadata.interfaces import IShouldHaveTraversablePath
+
 from nti.schema.field import Text
 from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
@@ -64,7 +66,7 @@ class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
             raise ValidationError("The end time can not before the start time.")
 
 
-class ICalendar(ILastModified, ITitledDescribed, IContainer):
+class ICalendar(IShouldHaveTraversablePath, ILastModified, ITitledDescribed, IContainer):
     """
     A storage container for :class:`ICalendarEvent` objects.
     """
