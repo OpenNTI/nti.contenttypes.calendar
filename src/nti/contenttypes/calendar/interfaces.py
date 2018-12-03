@@ -32,7 +32,7 @@ class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
     A calendar event.
     """
     title = ValidTextLine(title=u"Title of the calendar event",
-                          min_length=2,
+                          min_length=1,
                           required=True)
 
     description = ValidTextLine(title=u"Description of the calendar event",
