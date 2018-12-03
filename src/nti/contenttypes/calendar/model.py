@@ -101,6 +101,11 @@ class Calendar(CaseInsensitiveCheckingLastModifiedBTreeContainer, SchemaConfigur
     def retrieve_event(self, event_id):
         return self.get(event_id, None)
 
+    @Lazy
+    def ntiid(self):
+        return to_external_ntiid_oid(self)
+
+
 @component.adapter(ICalendar)
 @interface.implementer(INameChooser)
 class _CalendarNameChooser(AbstractNTIIDSafeNameChooser):
