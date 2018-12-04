@@ -107,6 +107,24 @@ class ICalendarEventProvider(interface.Interface):
         """
 
 
+class ICalendarDynamicEvent(interface.Interface):
+    """
+    Marker interface for calendar dynamic event.
+    """
+
+
+class ICalendarDynamicEventProvider(interface.Interface):
+    """
+    An intended subscriber provider of possible :class:`ICalendarDynamicEvent` objects
+    for a :class: `IUser`.
+    """
+
+    def iter_events():
+        """
+        A generator of :class:`ICalendarDynamicEvent` objects.
+        """
+
+
 # catalog
 
 class ICalendarContextNTIIDAdapter(interface.Interface):
