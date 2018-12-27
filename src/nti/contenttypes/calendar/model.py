@@ -20,6 +20,8 @@ from zope.container.contained import Contained
 
 from zope.container.interfaces import INameChooser
 
+from nti.asynchronous.job import ScheduledJob
+
 from nti.containers.containers import AbstractNTIIDSafeNameChooser
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
@@ -36,6 +38,7 @@ from nti.schema.schema import PermissiveSchemaConfigured as SchemaConfigured
 
 from nti.contenttypes.calendar.interfaces import ICalendar
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
+from nti.contenttypes.calendar.interfaces import ICalendarEventNotificationJob
 
 
 @interface.implementer(ICalendarEvent)
@@ -113,3 +116,8 @@ class _CalendarNameChooser(AbstractNTIIDSafeNameChooser):
     Handles NTIID-safe name choosing for a calendar event.
     """
     leaf_iface = ICalendar
+
+
+@interface.implementer(ICalendarEventNotificationJob)
+class CalendarEventNotificationJob(ScheduledJob):
+    pass
