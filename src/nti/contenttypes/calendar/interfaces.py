@@ -183,5 +183,7 @@ class ICalendarEventNotificationValidator(interface.Interface):
     """
     An object that checks if we should send notifications for calendar event.
     """
-    def validate():
-        pass
+    def validate(original_score):
+        """
+        Return True if the calendar event is still valid (e.g. start_time is not changed since last time we changed it, etc)
+        """
