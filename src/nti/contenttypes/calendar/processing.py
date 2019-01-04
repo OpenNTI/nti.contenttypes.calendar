@@ -16,12 +16,9 @@ from zope import component
 from zope.component.hooks import getSite
 from zope.component.hooks import site as current_site
 
-from nti.asynchronous.job import create_scheduled_job
+from nti.asynchronous.scheduled.job import create_scheduled_job
 
-from nti.contenttypes.calendar import get_scheduled_factory
-from nti.contenttypes.calendar import get_notification_factory
-from nti.contenttypes.calendar import SCHEDULED_CALENDAR_EVENTS_QUEUE_NAME
-from nti.contenttypes.calendar import NOTIFICATION_CALENDAR_EVENTS_QUEUE_NAME
+from nti.asynchronous.scheduled.utils import add_scheduled_job
 
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
 from nti.contenttypes.calendar.interfaces import ICalendarEventNotifier
@@ -52,54 +49,41 @@ def get_site(site_name=None):
     return site_name
 
 
-def get_scheduled_queue(name):
-    factory = get_scheduled_factory()
-    return factory.get_queue(name)
-
-
-def put_job(name, func, jid, *args, **kwargs):
-    queue = get_scheduled_queue(name)
+def put_job(func, jid, *args, **kwargs):
     job = create_scheduled_job(func,
                                jobid=jid,
                                score=kwargs['original_score'],
                                jargs=args,
                                jkwargs=kwargs,
                                cls=CalendarEventNotificationJob)
-    queue.put(job)
-    return job
+    return add_scheduled_job(job)
 
 
-def add_to_queue(name, func, calendar_event, next_func, jid=None):
+def add_to_queue(func, calendar_event, jid=None):
     site = get_site()
     ntiid = calendar_event.ntiid
     if ntiid and site:
         jid = '%s_%s_%s' % (ntiid, jid, time.time())
-        next_jid = '%s_%s' % (jid, 'notification')
         original_score = generate_score(calendar_event)
 
-        return put_job(name, func, jid,
+        return put_job(func,
+                       jid,
                        site=site,
-                       next_jid=next_jid,
-                       next_func=next_func,
                        original_score=original_score,
                        event_ntiid=ntiid)
     return None
 
 
 def queue_add(calendar_event):
-    return add_to_queue(SCHEDULED_CALENDAR_EVENTS_QUEUE_NAME,
-                        _execute_scheduled_job,
+    return add_to_queue(_execute_notification_job,
                         calendar_event,
-                        jid='added',
-                        next_func=_execute_notification_job)
+                        jid='added')
 
 
 def queue_modified(calendar_event):
-    return add_to_queue(SCHEDULED_CALENDAR_EVENTS_QUEUE_NAME,
-                        _execute_scheduled_job,
+    return add_to_queue(_execute_notification_job,
                         calendar_event,
-                        jid='modified',
-                        next_func=_execute_notification_job)
+                        jid='modified')
 
 
 # job functions
@@ -118,23 +102,6 @@ def get_job_site(job_site_name=None):
         if job_site is None or isinstance(job_site, TrivialSite):
             raise ValueError('No site found for (%s)' % job_site_name)
     return job_site
-
-
-def get_notification_queue(name):
-    factory = get_notification_factory()
-    return factory.get_queue(name)
-
-
-def _execute_scheduled_job(next_func, next_jid, *args, **kwargs):
-    queue = get_notification_queue(NOTIFICATION_CALENDAR_EVENTS_QUEUE_NAME)
-    job = create_scheduled_job(next_func,
-                              jobid=next_jid,
-                              score=kwargs['original_score'],
-                              jargs=args,
-                              jkwargs=kwargs,
-                              cls=CalendarEventNotificationJob)
-    queue.put(job)
-    return job
 
 
 def _execute_notification_job(event_ntiid, original_score, site=None, *args, **kwargs):

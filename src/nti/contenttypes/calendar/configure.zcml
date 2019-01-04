@@ -2,15 +2,12 @@
 <configure  xmlns="http://namespaces.zope.org/zope"
             xmlns:i18n="http://namespaces.zope.org/i18n"
             xmlns:ext="http://nextthought.com/ntp/ext"
-            xmlns:zcml="http://namespaces.zope.org/zcml"
-            xmlns:calendar="http://nextthought.com/ntp/calendar">
+            xmlns:zcml="http://namespaces.zope.org/zcml">
 
     <include package="zope.component" file="meta.zcml" />
     <include package="zope.security" file="meta.zcml" />
     <include package="zope.component" />
     <include package="zope.security" />
-
-    <include package="." file="meta.zcml" />
 
     <!-- Externalization -->
     <include package="nti.externalization" file="meta.zcml" />
@@ -26,16 +23,5 @@
         root_interfaces=".interfaces.ICalendar
                          .interfaces.ICalendarEvent"
         modules=".model" />
-
-    <!-- Scheduled notifications -->
-    <configure zcml:condition="have testmode">
-        <calendar:registerImmediateScheduledQueue />
-        <calendar:registerImmediateNotificationQueue />
-    </configure>
-
-    <configure zcml:condition="not-have testmode">
-        <calendar:registerScheduledQueue />
-        <calendar:registerNotificationQueue />
-    </configure>
 
 </configure>

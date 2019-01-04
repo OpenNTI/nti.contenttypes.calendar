@@ -19,7 +19,7 @@ from zope.container.interfaces import IContainer
 
 from zope.schema.interfaces import ValidationError
 
-from nti.asynchronous.interfaces import IScheduledJob
+from nti.asynchronous.scheduled.interfaces import IScheduledJob
 
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
@@ -149,18 +149,6 @@ class ICalendarProvider(interface.Interface):
 
 
 # notifications
-
-
-class ICalendarEventScheduledQueueFactory(interface.Interface):
-    """
-    A factory for calendar event scheduled queues.
-    """
-
-
-class ICalendarEventNotificationQueueFactory(interface.Interface):
-    """
-    A factory for calendar event notifications queues.
-    """
 
 
 class ICalendarEventNotificationJob(IScheduledJob):

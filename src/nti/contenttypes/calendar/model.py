@@ -20,7 +20,7 @@ from zope.container.contained import Contained
 
 from zope.container.interfaces import INameChooser
 
-from nti.asynchronous.job import ScheduledJob
+from nti.asynchronous.scheduled.job import ScheduledJob
 
 from nti.containers.containers import AbstractNTIIDSafeNameChooser
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
@@ -69,6 +69,11 @@ class CalendarEvent(SchemaConfigured,
     @Lazy
     def ntiid(self):
         return to_external_ntiid_oid(self)
+
+    @property
+    def containerId(self):
+        if self.__parent__ is not None:
+            return self.__parent__.ntiid
 
 
 @interface.implementer(ICalendar)
