@@ -70,7 +70,7 @@ class CalendarEvent(SchemaConfigured,
     def ntiid(self):
         return to_external_ntiid_oid(self)
 
-    @property
+    @readproperty
     def containerId(self):
         if self.__parent__ is not None:
             return self.__parent__.ntiid
