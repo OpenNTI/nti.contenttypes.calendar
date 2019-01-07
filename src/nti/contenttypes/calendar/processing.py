@@ -34,12 +34,12 @@ from nti.site.site import get_site_for_site_names
 
 from nti.site.transient import TrivialSite
 
-SCORE_INTERVAL = 30*60
+EXECUTING_TIME_INTERVAL = 30*60
 
 
-def generate_score(calendar_event):
+def generate_executing_time(calendar_event):
     dt = calendar_event.start_time
-    return calendar.timegm(dt.utctimetuple()) - SCORE_INTERVAL
+    return calendar.timegm(dt.utctimetuple()) - EXECUTING_TIME_INTERVAL
 
 
 def get_site(site_name=None):
@@ -52,7 +52,7 @@ def get_site(site_name=None):
 def put_job(func, jid, *args, **kwargs):
     job = create_scheduled_job(func,
                                jobid=jid,
-                               score=kwargs['original_score'],
+                               timestamp=kwargs['original_executing_time'],
                                jargs=args,
                                jkwargs=kwargs,
                                cls=CalendarEventNotificationJob)
@@ -64,12 +64,12 @@ def add_to_queue(func, calendar_event, jid=None):
     ntiid = calendar_event.ntiid
     if ntiid and site:
         jid = '%s_%s_%s' % (ntiid, jid, time.time())
-        original_score = generate_score(calendar_event)
+        original_executing_time = generate_executing_time(calendar_event)
 
         return put_job(func,
                        jid,
                        site=site,
-                       original_score=original_score,
+                       original_executing_time=original_executing_time,
                        event_ntiid=ntiid)
     return None
 
@@ -104,7 +104,7 @@ def get_job_site(job_site_name=None):
     return job_site
 
 
-def _execute_notification_job(event_ntiid, original_score, site=None, *args, **kwargs):
+def _execute_notification_job(event_ntiid, original_executing_time, site=None, *args, **kwargs):
     job_site = get_job_site(site)
     with current_site(job_site):
         obj = find_object_with_ntiid(event_ntiid)
@@ -112,7 +112,7 @@ def _execute_notification_job(event_ntiid, original_score, site=None, *args, **k
             return
 
         validator = ICalendarEventNotificationValidator(obj, None)
-        if validator and not validator.validate(original_score=original_score):
+        if validator and not validator.validate(original_executing_time=original_executing_time):
             return
 
         notifier = ICalendarEventNotifier(obj, None)

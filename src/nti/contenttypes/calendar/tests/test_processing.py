@@ -21,11 +21,11 @@ from nti.contenttypes.calendar.model import CalendarEvent
 
 from nti.contenttypes.calendar.tests import ContentTypesCalendarLayerTest
 
-from nti.contenttypes.calendar.processing import generate_score
+from nti.contenttypes.calendar.processing import generate_executing_time
 
 
 class TestProcessing(ContentTypesCalendarLayerTest):
 
-    def test_generate_score(self):
+    def test_generate_executing_time(self):
         event = CalendarEvent(title=u'abc', start_time=datetime.utcfromtimestamp(2800))
-        assert_that(generate_score(event), is_(1000))
+        assert_that(generate_executing_time(event), is_(1000))
