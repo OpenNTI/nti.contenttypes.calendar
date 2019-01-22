@@ -19,6 +19,8 @@ from zope.container.interfaces import IContainer
 
 from zope.schema.interfaces import ValidationError
 
+from nti.asynchronous.scheduled.interfaces import IScheduledJob
+
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
 from nti.base.interfaces import ITitledDescribed
@@ -143,4 +145,33 @@ class ICalendarProvider(interface.Interface):
     def iter_calendars(context_ntiids=None, excluded_context_ntiids=None):
         """
         A generator of :class:`ICalendar` objects.
+        """
+
+
+# notifications
+
+
+class ICalendarEventNotificationJob(IScheduledJob):
+    """
+    A scheduled job for calendar event notification.
+    """
+
+
+class ICalendarEventNotifier(interface.Interface):
+    """
+    An object that sends notification to users when an calendar event is created or modified.
+    """
+    def notify(*args, **kwargs):
+        """
+        Send notification to all potential users.
+        """
+
+
+class ICalendarEventNotificationValidator(interface.Interface):
+    """
+    An object that checks if we should send notifications for calendar event.
+    """
+    def validate(original_executing_time):
+        """
+        Return True if the calendar event is still valid (e.g. start_time is not changed since last time we changed it, etc)
         """
