@@ -175,3 +175,13 @@ class ICalendarEventNotificationValidator(interface.Interface):
         """
         Return True if the calendar event is still valid (e.g. start_time is not changed since last time we changed it, etc)
         """
+
+
+class ICalendarEventURLProvider(interface.Interface):
+    """
+    An object that can be adapted from :class:`ICalendarEvent`, and should return its app url or None.
+    """
+    def __call__():
+        """
+        Return an app url or None for a :class:`ICalendarEvent`.
+        """
