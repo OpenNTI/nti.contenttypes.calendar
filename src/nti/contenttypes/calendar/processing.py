@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+logger = __import__('logging').getLogger(__name__)
+
 import time
 import calendar
 
@@ -109,10 +111,12 @@ def _execute_notification_job(event_ntiid, original_executing_time, site=None, *
     with current_site(job_site):
         obj = find_object_with_ntiid(event_ntiid)
         if not ICalendarEvent.providedBy(obj):
+            logger.warning("Ignoring the processing of calendar event job, {0} is not a calendar event or was deleted.".format(obj or event_ntiid))
             return
 
         validator = ICalendarEventNotificationValidator(obj, None)
         if validator and not validator.validate(original_executing_time=original_executing_time):
+            logger.warning("Ignoring the processing of outdated calendar event job. event_ntiid={0}".format(event_ntiid))
             return
 
         notifier = ICalendarEventNotifier(obj, None)
