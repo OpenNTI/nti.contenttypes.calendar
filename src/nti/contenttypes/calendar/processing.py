@@ -25,6 +25,7 @@ from nti.asynchronous.scheduled.utils import add_scheduled_job
 from nti.contenttypes.calendar.interfaces import ICalendarEvent
 from nti.contenttypes.calendar.interfaces import ICalendarEventNotifier
 from nti.contenttypes.calendar.interfaces import ICalendarEventNotificationValidator
+from nti.contenttypes.calendar.interfaces import ICalendarEventURLProvider
 
 from nti.contenttypes.calendar.model import CalendarEventNotificationJob
 
@@ -68,11 +69,15 @@ def add_to_queue(func, calendar_event, jid=None):
         jid = '%s_%s_%s' % (ntiid, jid, time.time())
         original_executing_time = generate_executing_time(calendar_event)
 
+        provider = ICalendarEventURLProvider(calendar_event, None)
+        event_url = provider() if provider else None
+
         return put_job(func,
                        jid,
                        site=site,
                        original_executing_time=original_executing_time,
-                       event_ntiid=ntiid)
+                       event_ntiid=ntiid,
+                       event_url=event_url)
     return None
 
 
@@ -121,4 +126,4 @@ def _execute_notification_job(event_ntiid, original_executing_time, site=None, *
 
         notifier = ICalendarEventNotifier(obj, None)
         if notifier:
-            notifier.notify()
+            notifier.notify(event_url=kwargs.pop('event_url', None))
