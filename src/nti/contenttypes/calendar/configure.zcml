@@ -19,6 +19,10 @@
              for=".interfaces.ICalendar"
              provides="zope.container.interfaces.INameChooser"/>
 
+    <adapter factory=".job.CalendarScheduledNotificationJob"
+             provides="nti.dataserver.job.interfaces.IScheduledJob"
+             for=".interfaces.ICalendarEvent" />
+
     <ext:registerAutoPackageIO
         root_interfaces=".interfaces.ICalendar
                          .interfaces.ICalendarEvent"

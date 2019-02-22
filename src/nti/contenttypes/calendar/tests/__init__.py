@@ -11,16 +11,21 @@ import unittest
 
 import zope.testing.cleanup
 
-from nti.testing.base import AbstractTestBase
-
-from nti.testing.layers import ZopeComponentLayer
 from nti.testing.layers import ConfiguringLayerMixin
+from nti.testing.layers import find_test
+from nti.testing.layers import ZopeComponentLayer
+
+from nti.dataserver.tests import DSInjectorMixin
+
+from nti.dataserver.tests.mock_dataserver import _TestBaseMixin
 
 
 class SharedConfiguringTestLayer(ZopeComponentLayer,
-                                 ConfiguringLayerMixin):
+                                 ConfiguringLayerMixin,
+                                 DSInjectorMixin):
 
-    set_up_packages = ('nti.contenttypes.calendar',)
+    set_up_packages = ('nti.dataserver',
+                       'nti.contenttypes.calendar',)
 
     @classmethod
     def setUp(cls):
@@ -32,13 +37,15 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
         zope.testing.cleanup.cleanUp()
 
     @classmethod
-    def testSetUp(cls):
-        pass
+    def testSetUp(cls, test=None):
+        test = test or find_test()
+        cls.setUpTestDS(test)
 
     @classmethod
     def testTearDown(cls):
         pass
 
 
-class ContentTypesCalendarLayerTest(unittest.TestCase):
+class ContentTypesCalendarLayerTest(_TestBaseMixin,
+                                    unittest.TestCase):
     layer = SharedConfiguringTestLayer
