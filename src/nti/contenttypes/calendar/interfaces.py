@@ -63,9 +63,9 @@ class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
 
     @interface.invariant
     def start_end_time(self):
-        "The end time can not before the start time."
+        "The end time can not come before the start time."
         if self.end_time and self.start_time and self.end_time < self.start_time:
-            raise ValidationError("The end time can not before the start time.")
+            raise ValidationError("The end time can not come before the start time.")
 
 
 class ICalendar(IShouldHaveTraversablePath, ILastModified, ITitledDescribed, IContainer):
