@@ -8,7 +8,6 @@ from __future__ import absolute_import
 # pylint: disable=protected-access,too-many-public-methods
 
 import datetime
-import unittest
 
 from hamcrest import assert_that
 from hamcrest import calling
@@ -20,9 +19,6 @@ from hamcrest import is_
 from hamcrest import not_none
 from hamcrest import raises
 from hamcrest import same_instance
-from hamcrest import starts_with
-
-from zope import interface
 
 from zope.schema.interfaces import ValidationError
 
@@ -100,7 +96,7 @@ class TestExternalization(ContentTypesCalendarLayerTest):
         ICalendarEvent.validateInvariants(obj)
 
         obj =  CalendarEvent(title=u'reading', start_time=datetime.datetime.utcfromtimestamp(20), end_time=datetime.datetime.utcfromtimestamp(10))
-        assert_that(calling(ICalendarEvent.validateInvariants).with_args(obj), raises(ValidationError, 'The end time can not before the start time.'))
+        assert_that(calling(ICalendarEvent.validateInvariants).with_args(obj), raises(ValidationError, 'The end time can not come before the start time.'))
 
     def testCalendar(self):
         obj = Calendar(title=u"today", description=u'let us go')
