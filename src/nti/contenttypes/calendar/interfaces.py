@@ -138,7 +138,7 @@ class ICalendarContextNTIIDAdapter(interface.Interface):
 
 class ICalendarProvider(interface.Interface):
     """
-    An intended subscriber provider of possible :class:`ICalendar` objects
+    An intended subscriber provider of :class:`ICalendar` objects
     for a :class:`IUser`.
     """
 
@@ -147,6 +147,13 @@ class ICalendarProvider(interface.Interface):
         A generator of :class:`ICalendar` objects.
         """
 
+
+class IAdminCalendarProvider(ICalendarProvider):
+    """
+    An intended subscriber provider of :class:`ICalendar` objects
+    for a :class:`IUser` that can create in them.
+    """
+    pass
 
 # notifications
 
