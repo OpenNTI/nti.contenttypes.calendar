@@ -142,7 +142,7 @@ class ICalendarProvider(interface.Interface):
     for a :class:`IUser`.
     """
 
-    def iter_calendars(context_ntiids=None, excluded_context_ntiids=None):
+    def iter_calendars(context_ntiids=None, excluded_context_ntiids=None, include_filter=None):
         """
         A generator of :class:`ICalendar` objects.
         """
