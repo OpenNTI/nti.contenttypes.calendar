@@ -148,12 +148,16 @@ class ICalendarProvider(interface.Interface):
         """
 
 
-class IAdminCalendarProvider(ICalendarProvider):
+class IAdminCalendarProvider(interface.Interface):
     """
     An intended subscriber provider of :class:`ICalendar` objects
     for a :class:`IUser` that can create in them.
     """
-    pass
+
+    def iter_calendars(context_ntiids=None, excluded_context_ntiids=None, include_filter=None):
+        """
+        A generator of :class:`ICalendar` objects.
+        """
 
 # notifications
 
