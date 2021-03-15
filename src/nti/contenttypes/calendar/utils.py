@@ -8,6 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import calendar
 import time
 
 from datetime import datetime
@@ -25,6 +26,7 @@ from nti.contenttypes.calendar.index import get_calendar_event_catalog
 
 
 MAX_TS = time.mktime(datetime.max.timetuple())
+EXECUTING_TIME_INTERVAL = 30*60  # 30 minutes
 
 
 def _make_time_range_queries(notBefore=None, notAfter=None):
@@ -86,3 +88,8 @@ def get_indexed_calendar_events(contexts=None, notBefore=None, notAfter=None, mi
         event = intids.getObject(intid)
         result.append(event)
     return result
+
+
+def generate_executing_time(calendar_event):
+    dt = calendar_event.start_time
+    return calendar.timegm(dt.utctimetuple()) - EXECUTING_TIME_INTERVAL
