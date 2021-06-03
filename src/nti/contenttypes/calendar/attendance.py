@@ -61,22 +61,5 @@ class CalendarEventAttendanceContainer(CaseInsensitiveCheckingLastModifiedBTreeC
         return result
 
 
-
 CalendarEventAttendanceContainerFactory = an_factory(CalendarEventAttendanceContainer,
                                                      u'EventAttendance')
-
-
-def _create_annotation(obj, factory):
-    result = factory(obj)
-    if IConnection(result, None) is None:
-        try:
-            # pylint: disable=too-many-function-args
-            IConnection(obj).add(result)
-        except (TypeError, AttributeError):  # pragma: no cover
-            pass
-    return result
-
-
-@interface.implementer(ICalendarEventAttendanceContainer)
-def event_to_calendar_attendance(event):
-    return _create_annotation(event, CalendarEventAttendanceContainerFactory)

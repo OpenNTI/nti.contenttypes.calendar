@@ -19,7 +19,7 @@
              for=".interfaces.ICalendar"
              provides="zope.container.interfaces.INameChooser"/>
 
-    <adapter factory=".attendance.event_to_calendar_attendance"
+    <adapter factory=".attendance.CalendarEventAttendanceContainerFactory"
              for=".interfaces.ICalendarEvent"
              provides=".interfaces.ICalendarEventAttendanceContainer"/>
 
