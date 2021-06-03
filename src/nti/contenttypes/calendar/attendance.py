@@ -7,12 +7,12 @@ from __future__ import print_function
 
 from persistent import Persistent
 
-from ZODB.interfaces import IConnection
-
 from zope import component
 from zope import interface
 
 from zope.annotation import factory as an_factory
+
+from zope.security.interfaces import IPrincipal
 
 from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
@@ -47,14 +47,14 @@ class CalendarEventAttendanceContainer(CaseInsensitiveCheckingLastModifiedBTreeC
     createDirectFieldProperties(IUserCalendarEventAttendance)
 
     def add_attendance(self, user, attendance):
-        username = getattr(user, 'username', user)
-        self[username] = attendance
+        id = IPrincipal(user).id
+        self[id] = attendance
         return attendance
 
     def remove_attendance(self, user):
-        username = getattr(user, 'username', user)
+        id = IPrincipal(user).id
         try:
-            del self[username]
+            del self[id]
             result = True
         except KeyError:
             result = False
