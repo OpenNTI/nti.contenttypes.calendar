@@ -9,8 +9,10 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class
-
+from nti.contenttypes.completion.interfaces import ICompletableItem
 from zope import interface
+
+from zope.annotation.interfaces import IAttributeAnnotatable
 
 from zope.container.constraints import contains
 
@@ -34,7 +36,7 @@ from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
 
-class ICalendarEvent(ICreated, ILastModified, ITitledDescribed, IContained):
+class ICalendarEvent(IAttributeAnnotatable, ICreated, ILastModified, ITitledDescribed, IContained):
     """
     A calendar event.
     """
@@ -124,6 +126,32 @@ class ICalendarDynamicEventProvider(interface.Interface):
     def iter_events():
         """
         A generator of :class:`ICalendarDynamicEvent` objects.
+        """
+
+
+class IUserCalendarEventAttendance(ICreated, IContained):
+
+    registrationTime = ValidDatetime(title=u'The time at which attendance was recorded.',
+                                     required=True)
+
+    Username = ValidTextLine(title=u'User this attendance record is for',
+                             required=True)
+
+
+class ICalendarEventAttendanceContainer(IContainer):
+    """
+    An attendance storage container for :class:`ICalendarEvent` objects.
+    """
+    contains(IUserCalendarEventAttendance)
+
+    def add_attendance(user, attendance):
+        """
+        Store an attendance record for the given user.
+        """
+
+    def remove_attendance(user):
+        """
+        Remove attendance record for the given user.
         """
 
 
