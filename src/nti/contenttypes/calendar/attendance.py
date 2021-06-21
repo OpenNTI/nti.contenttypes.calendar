@@ -5,8 +5,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from persistent import Persistent
-
 from zope import component
 from zope import interface
 
@@ -20,6 +18,8 @@ from nti.contenttypes.calendar.interfaces import ICalendarEvent
 from nti.contenttypes.calendar.interfaces import ICalendarEventAttendanceContainer
 from nti.contenttypes.calendar.interfaces import IUserCalendarEventAttendance
 
+from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
+
 from nti.property.property import alias
 
 from nti.schema.schema import SchemaConfigured
@@ -30,7 +30,8 @@ logger = __import__('logging').getLogger(__name__)
 
 
 @interface.implementer(IUserCalendarEventAttendance)
-class UserCalendarEventAttendance(SchemaConfigured, Persistent):
+class UserCalendarEventAttendance(SchemaConfigured,
+                                  PersistentCreatedModDateTrackingObject):
     createDirectFieldProperties(IUserCalendarEventAttendance)
 
     __parent__ = None

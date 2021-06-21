@@ -9,7 +9,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # pylint: disable=inherit-non-class
-from nti.contenttypes.completion.interfaces import ICompletableItem
 from zope import interface
 
 from zope.annotation.interfaces import IAttributeAnnotatable
@@ -27,6 +26,8 @@ from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
 from nti.base.interfaces import ITitledDescribed
 
+from nti.contenttypes.completion.interfaces import ICompletableItem
+
 from nti.contenttypes.presentation.interfaces import href_schema_field
 
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
@@ -36,7 +37,12 @@ from nti.schema.field import ValidDatetime
 from nti.schema.field import DecodingValidTextLine as ValidTextLine
 
 
-class ICalendarEvent(IAttributeAnnotatable, ICreated, ILastModified, ITitledDescribed, IContained):
+class ICalendarEvent(IAttributeAnnotatable,
+                     ICreated,
+                     ILastModified,
+                     ITitledDescribed,
+                     IContained,
+                     ICompletableItem):
     """
     A calendar event.
     """
@@ -129,7 +135,7 @@ class ICalendarDynamicEventProvider(interface.Interface):
         """
 
 
-class IUserCalendarEventAttendance(ICreated, IContained):
+class IUserCalendarEventAttendance(ICreated, ILastModified, IContained):
 
     registrationTime = ValidDatetime(title=u'The time at which attendance was recorded.',
                                      required=True)
