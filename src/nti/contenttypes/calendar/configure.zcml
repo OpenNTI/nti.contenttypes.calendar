@@ -27,6 +27,6 @@
         root_interfaces=".interfaces.ICalendar
                          .interfaces.ICalendarEvent
                          .interfaces.IUserCalendarEventAttendance"
-        modules=".model" />
+        modules=".model .attendance" />
 
 </configure>

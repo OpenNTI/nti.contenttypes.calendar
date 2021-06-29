@@ -12,6 +12,7 @@ import datetime
 from hamcrest import assert_that
 from hamcrest import calling
 from hamcrest import contains
+from hamcrest import greater_than
 from hamcrest import has_entries
 from hamcrest import has_length
 from hamcrest import has_properties
@@ -21,6 +22,8 @@ from hamcrest import raises
 from hamcrest import same_instance
 
 from zope.schema.interfaces import ValidationError
+
+from nti.contenttypes.calendar.attendance import UserCalendarEventAttendance
 
 from nti.contenttypes.calendar.model import Calendar
 from nti.contenttypes.calendar.model import CalendarEvent
@@ -32,6 +35,8 @@ from nti.contenttypes.calendar.tests import ContentTypesCalendarLayerTest
 from nti.externalization import internalization
 
 from nti.externalization.externalization import toExternalObject
+
+from nti.externalization.externalization.standard_fields import datetime_to_string
 
 
 class TestExternalization(ContentTypesCalendarLayerTest):
@@ -111,6 +116,23 @@ class TestExternalization(ContentTypesCalendarLayerTest):
         assert_that(new_obj, has_properties({'title': 'future', 'description': 'do not go'}))
 
         assert_that(self._internalize(external, factory_=None), is_(None))
+
+    def testUserCalendarEventAttendance(self):
+        now = datetime.datetime.utcnow().replace(microsecond=0)
+        obj = UserCalendarEventAttendance(registrationTime=now,
+                                          Username=u'abcuser')
+        assert_that(obj.createdTime, greater_than(0))
+
+        external = toExternalObject(obj)
+        now_str = datetime_to_string(now)
+        mimetype = 'application/vnd.nextthought.calendar.usercalendareventattendance'
+        assert_that(external, has_entries({'Username': 'abcuser',
+                                           'registrationTime': now_str,
+                                           'MimeType': mimetype}))
+
+        new_io = self._internalize(external)
+        assert_that(new_io, has_properties({'Username': 'abcuser',
+                                            'registrationTime': now}))
 
 
 class TestContainer(ContentTypesCalendarLayerTest):

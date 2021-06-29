@@ -40,6 +40,10 @@ class UserCalendarEventAttendance(SchemaConfigured,
 
     Username = alias('__name__')
 
+    def __init__(self, **kwargs):
+        SchemaConfigured.__init__(self, **kwargs)
+        PersistentCreatedModDateTrackingObject.__init__(self)
+
 
 @component.adapter(ICalendarEvent)
 @interface.implementer(ICalendarEventAttendanceContainer)
