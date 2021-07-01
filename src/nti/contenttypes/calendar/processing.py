@@ -13,6 +13,8 @@ logger = __import__('logging').getLogger(__name__)
 import time
 import calendar
 
+from pyramid.threadlocal import get_current_request
+
 from zope import component
 
 from zope.component.hooks import getSite
@@ -53,6 +55,11 @@ def get_site(site_name=None):
 
 
 def put_job(func, jid, *args, **kwargs):
+    app_url = None
+    request = get_current_request()
+    if request:
+        app_url = request.application_url
+    kwargs['app_url'] = app_url
     job = create_scheduled_job(func,
                                jobid=jid,
                                timestamp=kwargs['original_executing_time'],
@@ -126,4 +133,6 @@ def _execute_notification_job(event_ntiid, original_executing_time, site=None, *
 
         notifier = ICalendarEventNotifier(obj, None)
         if notifier:
-            notifier.notify(event_url=kwargs.pop('event_url', None))
+            event_url = kwargs.pop('event_url', None)
+            app_url = kwargs.pop('app_url', None)
+            notifier.notify(event_url=event_url, app_url=app_url)
