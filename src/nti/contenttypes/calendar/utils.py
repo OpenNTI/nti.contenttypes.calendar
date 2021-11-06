@@ -28,21 +28,33 @@ MAX_TS = time.mktime(datetime.max.timetuple())
 
 
 def _make_time_range_queries(notBefore=None, notAfter=None):
-    queries = []
+    res = []
     if notBefore and notAfter:
-        queries.append({ IX_START_TIME: {'between': (notBefore, notAfter)} })
-        queries.append({ IX_END_TIME: {'between': (notBefore, notAfter)} })
-        queries.append({ IX_START_TIME: {'between': (0, notBefore)},
-                         IX_END_TIME: {'between': (notAfter, MAX_TS)} })
-
-    elif notBefore and not notAfter:
-        queries.append({ IX_START_TIME: {'between': (notBefore, MAX_TS)} })
-        queries.append({ IX_END_TIME: {'between': (notBefore, MAX_TS)} })
-
-    elif not notBefore and notAfter:
-        queries.append({ IX_START_TIME: {'between': (0, notAfter)} })
-
-    return queries
+        if notBefore != notAfter:
+            res.append({
+                IX_START_TIME : {'between': (notBefore, notAfter, False, True)}
+            })
+            res.append({
+                IX_START_TIME : {'between': (0, notBefore, False, True)},
+                IX_END_TIME: {'between': (notBefore, MAX_TS, True, False)}
+            })
+        else:
+            res.append({
+                IX_START_TIME : {'any_of': (notBefore,)}
+            })
+    elif notBefore:
+        res.append({
+            IX_START_TIME : {'between': (notBefore, MAX_TS)}
+        })
+        res.append({
+            IX_START_TIME : {'between': (0, notBefore, False, True)},
+            IX_END_TIME : {'between': (notBefore, MAX_TS, True, False)}
+        })
+    elif notAfter:
+        res.append({
+            IX_START_TIME: {'between': (0, notAfter, False, True)}
+        })
+    return res
 
 
 def get_indexed_calendar_events(contexts=None, notBefore=None, notAfter=None, mimeTypes=None, sites=None,
